@@ -277,12 +277,12 @@ export default function Home() {
         Silahkan isi form berikut untuk mendeteksi penyakit jantung
       </h3>
       <div className="flex flex-col w-fit gap-4">
-              <Select value={selectedModel} onValueChange={(value) => setSelectedModel(value)}>
+              <Select value={selectedModel} onValueChange={(value) => setSelectedModel(value as "cnn-lstm" | "random-forest" | "mi")}>
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih Model" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="cnn-lstm">CNN-LSTM (Original)</SelectItem>
+                  <SelectItem value="cnn-lstm">CNN-LSTM</SelectItem>
                   <SelectItem value="random-forest">Random Forest</SelectItem>
                   <SelectItem value="mi">Mutual Information + RF</SelectItem>
                 </SelectContent>
