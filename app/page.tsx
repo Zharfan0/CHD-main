@@ -29,7 +29,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
-  const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const [selectedModel, setSelectedModel] = useState<keyof typeof featureMap>("cnn-lstm");
   const [model, setModel] = useState<tfdf.TFDFModel | boolean | null>(null);
   const [backendReady, setBackendReady] = useState(false);
   const [result, setResult] = useState<number | undefined>(undefined);
