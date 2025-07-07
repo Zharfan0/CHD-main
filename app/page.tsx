@@ -101,7 +101,7 @@ export default function Home() {
   };
 
     const createSchema = (model: string | null) => {
-    const selectedFields = featureMap[model ?? "cnn-lstm"];
+    const selectedFields = featureMap[(model ?? "cnn-lstm") as keyof typeof featureMap];
     return z.object(
       Object.fromEntries(
         selectedFields.map((field) => [field, z.string().min(1).max(50)])
