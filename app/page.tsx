@@ -222,7 +222,7 @@ export default function Home() {
       ],
     };
 
-    const selectedFields = featureMap[selectedModel];
+    const selectedFields = featureMap[(selectedModel ?? "cnn-lstm") as keyof typeof featureMap];
     const filteredData = selectedFields.reduce((acc, key) => {
       acc[key] = parseFloat(values[key]);
       return acc;
