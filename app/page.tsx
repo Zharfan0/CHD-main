@@ -229,7 +229,7 @@ export default function Home() {
     }, {} as Record<string, number>);
 
     try {
-      const res = await fetch(`http://localhost:3001${endpointMap[selectedModel]}`, {
+      const res = await fetch(`https://chd-backend-production.up.railway.app${endpointMap[selectedModel]}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(filteredData),
