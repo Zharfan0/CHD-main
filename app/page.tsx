@@ -292,6 +292,18 @@ export default function Home() {
         <Form {...form} key={selectedModel}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
+                control={form.control}
+                name="nama"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nama</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Nama lengkap" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            <FormField
               control={form.control}
               name="sex"
               render={({ field }) => (
