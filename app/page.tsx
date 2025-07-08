@@ -290,10 +290,11 @@ export default function Home() {
   return (
     <main className="w-full h-full flex flex-col justify-start items-center gap-4 mt-10 md:px-0 px-6">
       <header className="flex flex-col items-center justify-center p-4 bg-red-800 text-white">
-        <img src="/logo-umy.png" alt="Logo UMY" className="w-20 h-20" />
+        <img src="/logoUMY.png" alt="Logo UMY" className="w-20 h-20" />
         <h1 className="text-2xl font-bold">Deteksi Dini Penyakit Jantung Koroner</h1>
         <p className="text-md">Prodi Teknologi Informasi</p>
       </header>
+
 
       <h1 className="text-xl font-semibold">
         AI Deteksi Penyakit Jantung Koroner
