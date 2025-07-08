@@ -289,7 +289,7 @@ export default function Home() {
 
   return (
     <main className="w-full h-full flex flex-col justify-start items-center gap-4 mt-10 md:px-0 px-6">
-
+      
       <header className="flex flex-col items-center justify-center p-4">
         <img src="/logoUMY.png" alt="Logo UMY" className="w-20 h-20" />
         <h1 className="text-2xl font-bold">Deteksi Dini Penyakit Jantung Koroner</h1>
@@ -1000,7 +1000,7 @@ export default function Home() {
                   <FormDescription>
                     Body Mass Index (BMI) in kg
                   </FormDescription>
-                  <Input type="number" placeholder="Body mass index" {...field} disabled={!isFieldEnabled("heightinmeters")}/>
+                  <Input type="number" placeholder="Body mass index" {...field} disabled={!isFieldEnabled("bmi")}/>
                   <FormMessage />
                 </FormItem>
               )}
