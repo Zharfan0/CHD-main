@@ -185,6 +185,7 @@ export default function Home() {
 
     if (selectedModel === "cnn-lstm") {
       // Proses model lokal CNN-LSTM
+      const v = values as any;
       const inputData = {
         'state': tf.tensor([0], [1], 'int32'),
         'sex': tf.tensor([parseInt(values.sex)], [1], 'int32'),
