@@ -101,15 +101,24 @@ export default function Home() {
   };
 
   const handleDownload = () => {
-    const nama = form.getValues("nama");
-    const selectedFields = featureMap[selectedModel];
-    const filledFields = selectedFields.map(
-      (key) => `${key}: ${form.getValues(key)}`
-    );
-    const hasil = `Hasil: ${predictionResult}\nConfidence: ${confidence ?? "N/A"}`;
+    // Ambil semua nilai form
+    const allValues = form.getValues();
+    const nama = allValues["nama"];
 
+    // Ambil field sesuai model yang dipilih
+    const selectedFields = featureMap[selectedModel ?? "cnn-lstm"];
+
+    // Format tiap field menjadi "namaField: nilai"
+    const filledFields = selectedFields.map((key) => {
+      const value = allValues[key as keyof typeof allValues];
+      return `${key}: ${value}`;
+    });
+
+    // Gabungkan semua data untuk isi file
+    const hasil = `Hasil: ${predictionResult}\nConfidence: ${confidence ?? "N/A"}`;
     const content = [`Nama: ${nama}`, ...filledFields, hasil].join("\n");
 
+    // Buat file dan trigger download
     const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -118,6 +127,7 @@ export default function Home() {
     a.click();
     window.URL.revokeObjectURL(url);
   };
+
 
 
     const createSchema = (model: string | null) => {
