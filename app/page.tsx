@@ -323,9 +323,9 @@ export default function Home() {
                   <SelectValue placeholder="Pilih Model" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="cnn-lstm">CNN-LSTM</SelectItem>
-                  <SelectItem value="random-forest">Random Forest</SelectItem>
-                  <SelectItem value="mi">Mutual Information + RF</SelectItem>
+                  <SelectItem value="cnn-lstm">37 Variabel (CNN-LSTM)</SelectItem>
+                  <SelectItem value="random-forest">10 Variabel (Random Forest)</SelectItem>
+                  <SelectItem value="mi">10 Variabel (Mutual Information)</SelectItem>
                 </SelectContent>
               </Select>
         </div>
@@ -337,9 +337,11 @@ export default function Home() {
                 name="nama"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Nama</FormLabel>
+                    <FormDescription>
+                      Name
+                    </FormDescription>
                     <FormControl>
-                      <Input placeholder="Nama lengkap" {...field} />
+                      <Input placeholder="Full Name" {...field} />
                     </FormControl>
                   </FormItem>
                 )}
