@@ -378,7 +378,7 @@ export default function Home() {
           <div>
             <h2 className="text-lg font-semibold">Hasil Prediksi:</h2>
             <p>
-              <medium>Result:</medium>{" "}
+              <strong>Result:</strong>{" "}
               {predictionResult === "Have heart disease"
                 ? "Have heart disease"
                 : predictionResult === "No heart disease"
