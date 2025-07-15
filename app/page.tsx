@@ -344,10 +344,11 @@ export default function Home() {
                                 <SelectValue placeholder={meta?.label || fieldName} />
                               </SelectTrigger>
                               <SelectContent>
-                                {meta.options.map((opt) => (
-                                  <SelectItem key={opt.value} value={opt.value}>
-                                    {opt.label}
-                                  </SelectItem>
+                                {Array.isArray(meta?.options) &&
+                                  meta.options.map((opt) => (
+                                    <SelectItem key={opt.value} value={opt.value}>
+                                      {opt.label}
+                                    </SelectItem>
                                 ))}
                               </SelectContent>
                             </Select>
