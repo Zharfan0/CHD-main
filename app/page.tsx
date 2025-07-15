@@ -329,6 +329,13 @@ export default function Home() {
                 const meta = fieldMetadata[fieldName];
                 const isDropdown = !!meta?.options;
 
+                {Array.isArray(meta?.options) && meta.options.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+
+
                 return (
                   <FormField
                     key={fieldName}
