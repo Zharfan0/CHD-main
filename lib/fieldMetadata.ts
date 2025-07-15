@@ -1,5 +1,13 @@
-export const fieldMetadata: Record<string, { label: string; description: string;options?: { label: string; value: string }}> = {
-  sex: {
+type FieldOption = { label: string; value: string };
+
+type FieldMeta = {
+  label: string;
+  description?: string;
+  options?: FieldOption[];
+};
+
+export const fieldMetadata: Record<string, FieldMeta> = {    
+    sex: {
     label: "Sex",
     description: "Sex of Respondent",
     options: [
