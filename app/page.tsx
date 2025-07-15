@@ -31,26 +31,6 @@ import {
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator";
 
-const featureMap = {
-  "cnn-lstm": ["sex", "generalhealth", "physicalhealthdays", "mentalhealthdays", "lastcheckuptime",
-  "physicalactivities", "sleephours", "removedteeth", "hadstroke", "hadasthma",
-  "hadskincancer", "hadcopd", "haddepressivedisorder", "hadkidneydisease", "hadarthritis",
-  "haddiabetes", "deaforhardofhearing", "blindorvisiondifficulty", "difficultyconcentrating",
-  "difficultywalking", "difficultydressingbathing", "difficultyerrands", "smokerstatus",
-  "ecigaretteusage", "chestscan", "raceethnicitycategory", "agecategory", "heightinmeters",
-  "bmi", "alcoholdrinkers", "hivtesting", "fluvaxlast12", "pneumovaxever",
-  "tetanuslast10tdap", "highrisklastyear", "covidpos"],
-    "random-forest": [
-      "sex", "generalhealth", "physicalhealthdays", "mentalhealthdays", "sleephours",
-      "hadasthma", "haddiabetes", "raceethnicitycategory", "agecategory", "bmi"
-    ],
-    "mi": [
-      "physicalactivities", "hadasthma", "removedteeth", "alcoholdrinkers",
-      "fluvaxlast12", "chestscan", "sex", "generalhealth",
-      "raceethnicitycategory", "lastcheckuptime"
-    ]
-  };
-
 export default function Home() {
   const [model, setModel] = useState<tfdf.TFDFModel | boolean | null>(null);
   const [backendReady, setBackendReady] = useState(false);
