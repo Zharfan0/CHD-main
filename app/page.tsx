@@ -327,14 +327,7 @@ export default function Home() {
 
               {selectedFields.map((fieldName) => {
                 const meta = fieldMetadata[fieldName];
-                const isDropdown = !!meta?.options;
-
-                {Array.isArray(meta?.options) && meta.options.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-
+                const isDropdown = Array.isArray(meta?.options); // ✅ pastikan array
 
                 return (
                   <FormField
@@ -343,15 +336,15 @@ export default function Home() {
                     name={fieldName}
                     render={({ field }) => (
                       <FormItem>
-                        <FormDescription>{meta?.description}</FormDescription>
+                        <FormDescription>{meta?.description || ""}</FormDescription>
                         <FormControl>
                           {isDropdown ? (
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!isFieldEnabled(fieldName)}>
                               <SelectTrigger>
-                                <SelectValue placeholder={`${meta?.label}`} />
+                                <SelectValue placeholder={meta?.label || fieldName} />
                               </SelectTrigger>
                               <SelectContent>
-                                {meta.options?.map((opt) => (
+                                {meta.options.map((opt) => (
                                   <SelectItem key={opt.value} value={opt.value}>
                                     {opt.label}
                                   </SelectItem>
@@ -359,7 +352,7 @@ export default function Home() {
                               </SelectContent>
                             </Select>
                           ) : (
-                            <Input {...field} placeholder={meta?.label} />
+                            <Input {...field} placeholder={meta?.label || fieldName} disabled={!isFieldEnabled(fieldName)} />
                           )}
                         </FormControl>
                         <FormMessage />
@@ -368,6 +361,7 @@ export default function Home() {
                   />
                 );
               })}
+
 
 
             <div className="flex flex-col w-fit gap-4">
