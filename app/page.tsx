@@ -387,7 +387,7 @@ export default function Home() {
             </p>
             {confidence !== null && (
               <p>
-                <medium>Confidence:</medium> {confidence}%
+                <strong>Confidence:</strong> {confidence}%
               </p>
             )}
           </div>
