@@ -220,7 +220,12 @@ export default function Home() {
       const result = await model.executeAsync(inputData);
       const prediction = result.dataSync()[0];
       setResult(prediction);
-      setConfidence(null); // Tidak ada confidence dari CNN-LSTM
+      const confidenceValue =
+        prediction >= 0.5
+          ? prediction * 100
+          : (1 - prediction) * 100;
+
+      setConfidence(Number(confidenceValue.toFixed(2)));
       setPredictionResult(prediction >= 0.5 ? "Have heart disease" : "No heart disease");
       toast.success(`Prediksi berhasil: ${prediction}`);
     } catch (error) {
@@ -263,10 +268,10 @@ export default function Home() {
       const prediction = resultJson.prediction;
             setResult(prediction);
 
-      if (resultJson.probability !== undefined) {
-        const prob = resultJson.probability;
-        setConfidence(Math.round(prob * 10000) / 100); // 2 desimal
-      } else {
+      if (resultJson.confidence !== undefined) {
+        setConfidence(resultJson.confidence);
+      }
+      else {
         setConfidence(null); // model tidak sediakan probabilitas
       }
 
