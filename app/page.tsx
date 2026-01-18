@@ -263,10 +263,10 @@ export default function Home() {
       const prediction = resultJson.prediction;
             setResult(prediction);
 
-      if (resultJson.probability !== undefined) {
-        const prob = resultJson.probability;
-        setConfidence(Math.round(prob * 10000) / 100); // 2 desimal
-      } else {
+      if (resultJson.confidence !== undefined) {
+        setConfidence(resultJson.confidence);
+      }
+      else {
         setConfidence(null); // model tidak sediakan probabilitas
       }
 
