@@ -1,38 +1,150 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+🫀 Coronary Heart Disease Early Detection System
+📌 Nama Aplikasi
 
-## Getting Started
+Coronary Heart Disease (CHD) Early Detection Web Application
 
-First, run the development server:
+A web-based application for early detection of coronary heart disease using multiple machine learning models.
 
-```bash
+📖 Deskripsi Singkat
+
+Aplikasi ini memungkinkan pengguna melakukan prediksi dini penyakit jantung koroner berdasarkan data kesehatan responden. Sistem mendukung tiga pendekatan model machine learning:
+
+CNN-LSTM
+
+Random Forest
+
+Mutual Information + Random Forest
+
+🧑‍💻 Cara Menggunakan Aplikasi
+
+Buka aplikasi melalui browser
+
+Pilih model prediksi:
+
+CNN-LSTM
+
+Random Forest
+
+Mutual Information + Random Forest
+
+Isi seluruh form sesuai data responden
+
+Klik Submit
+
+Sistem menampilkan hasil prediksi dan confidence score
+
+Hasil dapat diunduh dalam bentuk file teks
+
+⚙️ Persyaratan / Requirements
+Frontend
+
+Node.js ≥ 18
+
+npm / yarn
+
+Browser modern (Chrome / Edge / Firefox)
+
+Backend (Opsional untuk RF & MI-RF)
+
+Python ≥ 3.9
+
+FastAPI
+
+scikit-learn
+
+pandas
+
+numpy
+
+uvicorn
+
+🛠️ Langkah Instalasi Awal (Initial Setup)
+Clone Repository
+git clone https://github.com/Zharfan0/CHD-main.git
+cd CHD-main
+
+💻 Langkah Pengembangan Lokal (Local Development Steps)
+Frontend (Next.js)
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Run in terminal [uvicorn backend.main:app --reload --port 3001] and open [http://localhost:3001/docs]
+Akses di:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Backend (FastAPI – Optional)
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+Akses API:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+http://localhost:8000
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+Endpoint:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+/predict/rf
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+/predict/mi
+
+🚀 Langkah Deploy untuk Versi Produksi (Production Deployment Steps)
+Frontend
+
+Deploy menggunakan Vercel
+
+Build otomatis dari repository GitHub
+
+Backend
+
+Backend tidak dijalankan di browser dan harus dideploy di server terpisah.
+
+Opsi deployment backend:
+
+Server internal kampus
+
+Cloud service (Render, VPS, atau server institusi)
+
+Command produksi:
+
+uvicorn main:app --host 0.0.0.0 --port 8000
+
+🧠 Arsitektur Sistem
+
+Client-side inference: CNN-LSTM (TensorFlow.js)
+
+Server-side inference: Random Forest & MI-RF (FastAPI)
+
+Frontend–Backend communication: REST API (JSON)
+
+🔐 Keamanan
+
+Tidak menyimpan data pengguna
+
+Tidak melakukan training online
+
+Model hanya digunakan untuk inference
+
+Aman untuk deployment institusional
+
+📚 Teknologi yang Digunakan
+
+Next.js
+
+React Hook Form
+
+TensorFlow.js
+
+FastAPI
+
+scikit-learn
+
+Zod
+
+Tailwind CSS
+
+📄 Lisensi
+
+Academic & Research Use Only
