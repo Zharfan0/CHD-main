@@ -309,9 +309,9 @@ export default function Home() {
                   <SelectValue placeholder="Pilih Model" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="cnn-lstm">CNN-LSTM (37)</SelectItem>
-                  <SelectItem value="random-forest">Random Forest (10)</SelectItem>
                   <SelectItem value="mi">Mutual Info (10)</SelectItem>
+                  <SelectItem value="random-forest">Random Forest (10)</SelectItem>
+                  <SelectItem value="cnn-lstm">CNN-LSTM (37)</SelectItem>
                 </SelectContent>
               </Select>
         </div>
