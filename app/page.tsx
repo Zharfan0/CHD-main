@@ -249,8 +249,11 @@ export default function Home() {
       return acc;
     }, {} as Record<string, number>);
 
+    console.log("Selected Model:", selectedModel);
+    console.log("Data dikirim:", filteredData);
+
     try {
-      const res = await fetch(`https://chd-backend-production.up.railway.app${endpointMap[selectedModel]}`, {
+      const res = await fetch(`https://chd-backend-production-8b5b.up.railway.app${endpointMap[selectedModel]}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(filteredData),
@@ -268,8 +271,8 @@ export default function Home() {
       const prediction = resultJson.prediction;
             setResult(prediction);
 
-      if (resultJson.confidence !== undefined) {
-        setConfidence(resultJson.confidence);
+     if (resultJson.probability !== undefined) {
+        setConfidence(Number((resultJson.probability * 100).toFixed(2)));
       }
       else {
         setConfidence(null); // model tidak sediakan probabilitas
