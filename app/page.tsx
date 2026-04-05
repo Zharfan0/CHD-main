@@ -30,6 +30,21 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator";
+import { 
+  Activity, 
+  Brain, 
+  Download, 
+  Heart, 
+  Save, 
+  Shield, 
+  Stethoscope,
+  AlertCircle,
+  CheckCircle2,
+  Loader2,
+  Sparkles,
+  User,
+  Menu
+} from "lucide-react";
 
 export default function Home() {
   const [model, setModel] = useState<tfdf.TFDFModel | boolean | null>(null);
@@ -37,7 +52,7 @@ export default function Home() {
   const [result, setResult] = useState<number | undefined>(undefined);
   const [selectedModel, setSelectedModel] = useState<"cnn-lstm" | "random-forest" | "mi">("cnn-lstm");
   const selectedFields = featureMap[selectedModel ?? "cnn-lstm"];
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Inisialisasi backend TensorFlow DF
   useEffect(() => {
@@ -86,21 +101,14 @@ export default function Home() {
 
   
   const handleDownload = () => {
-    // Ambil semua nilai form
     const allValues = form.getValues();
     const nama = allValues["nama"];
-
-    // Format tiap field menjadi "namaField: nilai"
     const filledFields = selectedFields.map((key) => {
       const value = allValues[key as keyof typeof allValues];
       return `${key}: ${value}`;
     });
-
-    // Gabungkan semua data untuk isi file
     const hasil = `Hasil: ${predictionResult}\nConfidence: ${confidence ?? "N/A"}`;
     const content = [`Nama: ${nama}`, ...filledFields, hasil].join("\n");
-
-    // Buat file dan trigger download
     const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -109,18 +117,6 @@ export default function Home() {
     a.click();
     window.URL.revokeObjectURL(url);
   };
-
-
-
-    const createSchema = (model: string | null) => {
-      const selectedFields = featureMap[(model ?? "cnn-lstm") as keyof typeof featureMap];
-      return z.object({
-        nama: z.string().min(1),
-        ...Object.fromEntries(
-          selectedFields.map((field) => [field, z.string().min(1).max(50)])
-        )
-      });
-    };
 
 
   const [formSchema, setFormSchema] = useState(createSchema("cnn-lstm"));
@@ -140,7 +136,7 @@ export default function Home() {
 
     const isFieldEnabled = (fieldName: string) => {
     const selectedFields = featureMap[selectedModel];
-    if (!selectedFields) return true; // default: semua aktif jika belum dipilih
+    if (!selectedFields) return true;
     return selectedFields.includes(fieldName);
   };
 
@@ -162,9 +158,11 @@ export default function Home() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
   console.log("Form submitted:", values);
+  setIsSubmitting(true);
 
       if (!model) {
         toast.error("Model belum dimuat");
+        setIsSubmitting(false);
         return;
       }
 
@@ -174,7 +172,6 @@ export default function Home() {
 
 
     if (selectedModel === "cnn-lstm") {
-      // Proses model lokal CNN-LSTM
       const v = values as any;
       const inputData = {
         'state': tf.tensor([0], [1], 'int32'),
@@ -231,10 +228,11 @@ export default function Home() {
     } catch (error) {
       console.error("Error executing model:", error);
       toast.error("Gagal menjalankan model CNN-LSTM");
+    } finally {
+      setIsSubmitting(false);
     }
 
     } else {
-      // ✅ Proses model Random Forest dan MI via API
       const endpointMap = {
         "random-forest": "/predict/rf",
         "mi": "/predict/mi",
@@ -245,10 +243,15 @@ export default function Home() {
 
     const selectedFields = featureMap[(selectedModel ?? "cnn-lstm") as keyof typeof featureMap];
     const filteredData = selectedFields.reduce((acc, key) => {
-      acc[key] = parseFloat(v[key]);
-      return acc;
-    }, {} as Record<string, number>);
-
+  const value = v[key];
+  if (value === "" || value === null || value === undefined) {
+    acc[key] = 0;
+  } else {
+    const num = parseFloat(value);
+    acc[key] = isNaN(num) ? 0 : num;
+  }
+  return acc;
+}, {} as Record<string, number>);
     console.log("Selected Model:", selectedModel);
     console.log("Data dikirim:", filteredData);
 
@@ -265,6 +268,7 @@ export default function Home() {
 
       if (resultJson.error) {
         toast.error("Error dari backend: " + resultJson.error);
+        setIsSubmitting(false);
         return;
       }
 
@@ -275,7 +279,7 @@ export default function Home() {
         setConfidence(Number((resultJson.probability * 100).toFixed(2)));
       }
       else {
-        setConfidence(null); // model tidak sediakan probabilitas
+        setConfidence(null);
       }
 
       setPredictionResult(prediction === 1 ? "Have heart disease" : "No heart disease");
@@ -284,6 +288,8 @@ export default function Home() {
     } catch (error) {
       console.error("Gagal fetch ke API:", error);
       toast.error("Gagal prediksi melalui backend API");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 }
@@ -291,115 +297,287 @@ export default function Home() {
 
 
   return (
-    <main className="w-full h-full flex flex-col justify-start items-center gap-4 mt-10 md:px-0 px-6">
-      
-      <header className="flex flex-col items-center justify-center p-4">
-        <img src="/logoUMY.png" alt="Logo UMY" className="w-20 h-20" />
-        <h1 className="text-2xl font-bold">Deteksi Dini Penyakit Jantung Koroner</h1>
-        <p className="text-md">Prodi Teknologi Informasi</p>
-      </header>
-
-      <Separator className="max-w-[800px]" />
-      <h3 className="text-sm text-gray-500">
-        Silahkan isi form berikut untuk mendeteksi penyakit jantung
-      </h3>
-      <div className="flex flex-col w-fit gap-4">
-              <Select value={selectedModel} onValueChange={(value) => setSelectedModel(value as any)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih Model" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="mi">Mutual Info (10)</SelectItem>
-                  <SelectItem value="random-forest">Random Forest (10)</SelectItem>
-                  <SelectItem value="cnn-lstm">CNN-LSTM (37)</SelectItem>
-                </SelectContent>
-              </Select>
-        </div>
-      <div className="border-2 border-gray-500 px-4 py-2 shadow-lg rounded-lg max-w-[800px]">
-        <Form {...form} key={selectedModel}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-                control={form.control}
-                name="nama"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormDescription>
-                        Name
-                    </FormDescription>
-                    <FormControl>
-                      <Input placeholder="Full Name" {...field} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              {selectedFields.map((fieldName) => {
-                const meta = fieldMetadata[fieldName];
-                const isDropdown = Array.isArray(meta?.options); // ✅ pastikan array
-
-                return (
-                  <FormField
-                    key={fieldName}
-                    control={form.control}
-                    name={fieldName}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormDescription>{meta?.description || ""}</FormDescription>
-                        <FormControl>
-                          {isDropdown ? (
-                            <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!isFieldEnabled(fieldName)}>
-                              <SelectTrigger>
-                                <SelectValue placeholder={meta?.label || fieldName} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {Array.isArray(meta?.options) &&
-                                  meta.options.map((opt) => (
-                                    <SelectItem key={opt.value} value={opt.value}>
-                                      {opt.label}
-                                    </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          ) : (
-                            <Input {...field} placeholder={meta?.label || fieldName} disabled={!isFieldEnabled(fieldName)} />
-                          )}
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                );
-              })}
-
-
-
-            <div className="flex flex-col w-fit gap-4">
-              <Button type="submit" disabled={!model} >Submit</Button>
-              <Button onClick={handleDownload} disabled={predictionResult === null}>Simpan Hasil</Button>
-            </div>
-          </form>
-        </Form>
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+      {/* Decorative Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-r from-red-200 to-pink-200 rounded-full blur-3xl opacity-30"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-r from-blue-200 to-indigo-200 rounded-full blur-3xl opacity-30"></div>
       </div>
 
-      <div className="border-2 border-gray-500 px-4 py-2 shadow-lg rounded-lg max-w-[800px] mb-[100px]">
+      <div className="relative max-w-6xl mx-auto px-4 py-8 md:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <div className="flex justify-center mb-4">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-pink-500 rounded-full blur-xl opacity-30"></div>
+              <img src="/logoUMY.png" alt="Logo UMY" className="relative w-20 h-20 object-contain" />
+            </div>
+          </div>
+          
+          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-2">
+            Deteksi Dini Penyakit Jantung Koroner
+          </h1>
+          <p className="text-gray-600 text-sm md:text-base">
+            Program Studi Teknologi Informasi
+          </p>
+          
+          <Separator className="max-w-[300px] mx-auto my-6 bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
+          
+          <p className="text-gray-500 max-w-2xl mx-auto">
+            Silakan isi form berikut dengan data Anda untuk mendapatkan prediksi risiko penyakit jantung koroner
+          </p>
+        </div>
+
+        {/* Model Selection Card */}
+        <div className="max-w-2xl mx-auto mb-8">
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl">
+                <Brain className="w-5 h-5 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-800">Pilih Model Prediksi</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {[
+                { value: "mi", label: "Mutual Info", desc: "10 fitur terpilih", icon: Activity, color: "from-emerald-500 to-teal-500" },
+                { value: "random-forest", label: "Random Forest", desc: "10 fitur utama", icon: Shield, color: "from-orange-500 to-red-500" },
+                { value: "cnn-lstm", label: "CNN-LSTM", desc: "37 fitur lengkap", icon: Sparkles, color: "from-purple-500 to-pink-500" }
+              ].map((item) => (
+                <button
+                  key={item.value}
+                  onClick={() => setSelectedModel(item.value as any)}
+                  className={`relative group p-4 rounded-xl transition-all duration-300 ${
+                    selectedModel === item.value
+                      ? `bg-gradient-to-r ${item.color} shadow-lg scale-105`
+                      : "bg-gray-50 hover:bg-gray-100 border-2 border-transparent hover:border-gray-200"
+                  }`}
+                >
+                  <div className="flex flex-col items-center text-center gap-2">
+                    <div className={`p-2 rounded-lg transition-colors ${
+                      selectedModel === item.value ? "bg-white/20" : "bg-gray-200"
+                    }`}>
+                      <item.icon className={`w-5 h-5 ${
+                        selectedModel === item.value ? "text-white" : "text-gray-600"
+                      }`} />
+                    </div>
+                    <span className={`font-semibold text-sm ${
+                      selectedModel === item.value ? "text-white" : "text-gray-700"
+                    }`}>
+                      {item.label}
+                    </span>
+                    <span className={`text-xs ${
+                      selectedModel === item.value ? "text-white/80" : "text-gray-500"
+                    }`}>
+                      {item.desc}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Main Form Card */}
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+            <div className="bg-gradient-to-r from-gray-800 to-gray-900 px-6 py-4">
+              <div className="flex items-center gap-2">
+                <Stethoscope className="w-5 h-5 text-white" />
+                <h2 className="text-white font-semibold">Form Data Pasien</h2>
+              </div>
+            </div>
+            
+            <div className="p-6 md:p-8">
+              <Form {...form} key={selectedModel}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  {/* Nama Field */}
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
+                    <FormField
+                      control={form.control}
+                      name="nama"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-gray-700 font-semibold flex items-center gap-2">
+                            <User className="w-4 h-4 text-blue-500" />
+                            Nama Lengkap
+                          </FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Masukkan nama lengkap Anda" 
+                              {...field} 
+                              className="border-gray-200 focus:border-blue-400 focus:ring-blue-400 bg-white"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Dynamic Fields Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {selectedFields.map((fieldName) => {
+                      const meta = fieldMetadata[fieldName];
+                      const isDropdown = Array.isArray(meta?.options);
+
+                      return (
+                        <div key={fieldName} className="group">
+                          <FormField
+                            control={form.control}
+                            name={fieldName}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-sm font-medium text-gray-700">
+                                  {meta?.label || fieldName}
+                                </FormLabel>
+                                <FormControl>
+                                  {isDropdown ? (
+                                    <Select 
+                                      onValueChange={field.onChange} 
+                                      defaultValue={field.value} 
+                                      disabled={!isFieldEnabled(fieldName)}
+                                    >
+                                      <SelectTrigger className="border-gray-200 focus:border-blue-400 focus:ring-blue-400 bg-white">
+                                        <SelectValue placeholder={`Pilih ${meta?.label || fieldName}`} />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {Array.isArray(meta?.options) &&
+                                          meta.options.map((opt) => (
+                                            <SelectItem key={opt.value} value={opt.value}>
+                                              {opt.label}
+                                            </SelectItem>
+                                          ))}
+                                      </SelectContent>
+                                    </Select>
+                                  ) : (
+                                    <Input 
+                                      {...field} 
+                                      placeholder={meta?.label || fieldName} 
+                                      disabled={!isFieldEnabled(fieldName)}
+                                      className="border-gray-200 focus:border-blue-400 focus:ring-blue-400 bg-white"
+                                    />
+                                  )}
+                                </FormControl>
+                                {meta?.description && (
+                                  <FormDescription className="text-xs text-gray-500">
+                                    {meta.description}
+                                  </FormDescription>
+                                )}
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                    <Button 
+                      type="submit" 
+                      disabled={!model || isSubmitting}
+                      className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Memproses...
+                        </>
+                      ) : (
+                        <>
+                          <Heart className="mr-2 h-5 w-5" />
+                          Deteksi Sekarang
+                        </>
+                      )}
+                    </Button>
+                    
+                    <Button 
+                      onClick={handleDownload} 
+                      disabled={predictionResult === null}
+                      type="button"
+                      variant="outline"
+                      className="flex-1 border-2 border-gray-300 hover:border-blue-400 hover:bg-blue-50 font-semibold py-6 rounded-xl transition-all duration-300"
+                    >
+                      <Save className="mr-2 h-5 w-5" />
+                      Simpan Hasil
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </div>
+          </div>
+        </div>
+
+        {/* Result Card */}
         {predictionResult !== null && (
-          <div>
-            <h2 className="text-lg font-semibold">Hasil Prediksi:</h2>
-            <p>
-              <strong>Result:</strong>{" "}
-              {predictionResult === "Have heart disease"
-                ? "Have heart disease"
-                : predictionResult === "No heart disease"
-                ? "Doesn't have Heart Disease"
-                : predictionResult}
-            </p>
-            {confidence !== null && (
-              <p>
-                <strong>Confidence:</strong> {confidence}%
-              </p>
-            )}
+          <div className="max-w-4xl mx-auto mt-8 mb-16 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className={`rounded-2xl shadow-xl overflow-hidden ${
+              predictionResult === "Have heart disease" 
+                ? "bg-gradient-to-r from-red-50 to-orange-50 border-l-8 border-red-500"
+                : "bg-gradient-to-r from-green-50 to-emerald-50 border-l-8 border-green-500"
+            }`}>
+              <div className="p-6 md:p-8">
+                <div className="flex items-start gap-4">
+                  <div className={`p-3 rounded-full ${
+                    predictionResult === "Have heart disease" 
+                      ? "bg-red-100" 
+                      : "bg-green-100"
+                  }`}>
+                    {predictionResult === "Have heart disease" ? (
+                      <AlertCircle className="w-8 h-8 text-red-600" />
+                    ) : (
+                      <CheckCircle2 className="w-8 h-8 text-green-600" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">Hasil Prediksi</h3>
+                    <p className="text-2xl md:text-3xl font-bold mb-3">
+                      {predictionResult === "Have heart disease" ? (
+                        <span className="text-red-600">⚠️ Berisiko Tinggi</span>
+                      ) : (
+                        <span className="text-green-600">✅ Risiko Rendah</span>
+                      )}
+                    </p>
+                    <p className="text-gray-600 mb-2">
+                      {predictionResult === "Have heart disease" 
+                        ? "Berdasarkan data yang Anda masukkan, terdapat indikasi risiko penyakit jantung koroner. Segera konsultasikan dengan dokter untuk pemeriksaan lebih lanjut."
+                        : "Berdasarkan data yang Anda masukkan, risiko penyakit jantung koroner tergolong rendah. Tetaplah menjaga pola hidup sehat."
+                      }
+                    </p>
+                    {confidence !== null && (
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <p className="text-sm text-gray-500">Tingkat Keyakinan Model</p>
+                        <div className="flex items-center gap-3 mt-1">
+                          <div className="flex-1 bg-gray-200 rounded-full h-2.5">
+                            <div 
+                              className={`h-2.5 rounded-full transition-all duration-1000 ${
+                                predictionResult === "Have heart disease" 
+                                  ? "bg-gradient-to-r from-red-500 to-orange-500" 
+                                  : "bg-gradient-to-r from-green-500 to-emerald-500"
+                              }`}
+                              style={{ width: `${confidence}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-sm font-semibold text-gray-700">{confidence}%</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
+
+        {/* Footer Note */}
+        <div className="text-center mt-12 pb-8">
+          <p className="text-xs text-gray-400">
+            ⚠️ Prediksi ini bersifat informatif dan tidak menggantikan diagnosis medis profesional. 
+            Selalu konsultasikan dengan dokter untuk hasil yang akurat.
+          </p>
+        </div>
       </div>
     </main>
   );
