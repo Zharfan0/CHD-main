@@ -44,6 +44,7 @@ import {
   Waypoints,
   User,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function Home() {
   const [model, setModel] = useState<tfdf.TFDFModel | boolean | null>(null);
@@ -231,7 +232,7 @@ export default function Home() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          nama: values.nama,
+          nama: nama,
           selectedModel: selectedModel,
           hasilPrediksi: hasilPrediksiText,
           confidence: confidenceFinal,
@@ -312,7 +313,7 @@ export default function Home() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          nama: values.nama,
+          nama: nama,
           selectedModel: selectedModel,
           hasilPrediksi: hasilPrediksiText,
           confidence: finalConfidence,
@@ -352,7 +353,7 @@ export default function Home() {
           <div className="flex justify-center mb-4">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-pink-500 rounded-full blur-xl opacity-30"></div>
-              <img src="/logoUMY.png" alt="Logo UMY" className="relative w-20 h-20 object-contain" />
+              <image src="/logoUMY.png" alt="Logo UMY" className="relative w-20 h-20 object-contain" />
             </div>
           </div>
           
