@@ -33,7 +33,6 @@ import { Separator } from "@/components/ui/separator";
 import { 
   Activity, 
   Brain, 
-  Download, 
   Heart, 
   Save, 
   Shield, 
@@ -43,14 +42,13 @@ import {
   Loader2,
   Sparkles,
   User,
-  Menu
 } from "lucide-react";
 
 export default function Home() {
   const [model, setModel] = useState<tfdf.TFDFModel | boolean | null>(null);
   const [backendReady, setBackendReady] = useState(false);
   const [result, setResult] = useState<number | undefined>(undefined);
-  const [selectedModel, setSelectedModel] = useState<"cnn-lstm" | "random-forest" | "mi">("cnn-lstm");
+  const [selectedModel, setSelectedModel] = useState<"cnn-lstm" | "random-forest" | "mi">("mi");
   const selectedFields = featureMap[selectedModel ?? "cnn-lstm"];
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -119,13 +117,13 @@ export default function Home() {
   };
 
 
-  const [formSchema, setFormSchema] = useState(createSchema("cnn-lstm"));
+  const [formSchema, setFormSchema] = useState(createSchema("mi"));
 
   const form = useForm<any>({
   resolver: zodResolver(formSchema),
   defaultValues: {
     nama: "",
-    ...Object.fromEntries(featureMap["cnn-lstm"].map((field) => [field, ""]))
+    ...Object.fromEntries(featureMap["mi"].map((field) => [field, ""]))
   }
 });
 
@@ -141,19 +139,13 @@ export default function Home() {
   };
 
   useEffect(() => {
-  const newSchema = createSchema(selectedModel ?? "cnn-lstm");
-  setFormSchema(newSchema);
-  form.reset({}, { keepValues: true });
-}, [selectedModel]);
-
-    useEffect(() => {
       const schema = createSchema(selectedModel);
       setFormSchema(schema);
       form.reset({
         nama: "",
         ...Object.fromEntries(featureMap[selectedModel].map(field => [field, ""]))
       });
-    }, [selectedModel]);
+    }, [selectedModel, form]);
 
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -225,6 +217,30 @@ export default function Home() {
       setConfidence(Number(confidenceValue.toFixed(2)));
       setPredictionResult(prediction >= 0.5 ? "Have heart disease" : "No heart disease");
       toast.success(`Prediksi berhasil: ${prediction}`);
+
+      // Simpan ke Google Sheet untuk CNN-LSTM (pakai variabel lokal)
+      const hasilPrediksiText = prediction >= 0.5 ? "Have heart disease" : "No heart disease";
+      const confidenceValueFinal = prediction >= 0.5
+        ? prediction * 100
+        : (1 - prediction) * 100;
+      const confidenceFinal = Number(confidenceValueFinal.toFixed(2));
+
+      try {
+        await fetch("/api/save-to-sheets", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nama: values.nama,
+            selectedModel: selectedModel,
+            hasilPrediksi: hasilPrediksiText,
+            confidence: confidenceFinal,
+          }),
+        });
+        console.log("Data CNN-LSTM saved to Google Sheet");
+      } catch (saveError) {
+        console.error("Failed to save CNN-LSTM to sheet:", saveError);
+      }
+
     } catch (error) {
       console.error("Error executing model:", error);
       toast.error("Gagal menjalankan model CNN-LSTM");
@@ -273,18 +289,39 @@ export default function Home() {
       }
 
       const prediction = resultJson.prediction;
-            setResult(prediction);
+      setResult(prediction);
 
-     if (resultJson.probability !== undefined) {
-        setConfidence(Number((resultJson.probability * 100).toFixed(2)));
-      }
-      else {
+      // Hitung confidence dan hasil prediksi terlebih dahulu
+      let finalConfidence = null;
+      if (resultJson.probability !== undefined) {
+        finalConfidence = Number((resultJson.probability * 100).toFixed(2));
+        setConfidence(finalConfidence);
+      } else {
         setConfidence(null);
       }
 
-      setPredictionResult(prediction === 1 ? "Have heart disease" : "No heart disease");
+      const hasilPrediksiText = prediction === 1 ? "Have heart disease" : "No heart disease";
+      setPredictionResult(hasilPrediksiText);
+
+      // Simpan ke Google Sheet PAKAI VARIABEL LOKAL, BUKAN STATE
+      try {
+        await fetch("/api/save-to-sheets", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nama: values.nama,
+            selectedModel: selectedModel,
+            hasilPrediksi: hasilPrediksiText,
+            confidence: finalConfidence,
+          }),
+        });
+        console.log("Data saved to Google Sheet");
+      } catch (saveError) {
+        console.error("Failed to save to sheet:", saveError);
+      }
 
       toast.success(`Prediksi berhasil: ${prediction === 1 ? "Positif" : "Negatif"}`);
+
     } catch (error) {
       console.error("Gagal fetch ke API:", error);
       toast.error("Gagal prediksi melalui backend API");
