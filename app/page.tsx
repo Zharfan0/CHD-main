@@ -227,15 +227,17 @@ export default function Home() {
 
       try {
         await fetch("/api/save-to-sheets", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            nama: values.nama,
-            selectedModel: selectedModel,
-            hasilPrediksi: hasilPrediksiText,
-            confidence: confidenceFinal,
-          }),
-        });
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nama: values.nama,
+          selectedModel: selectedModel,
+          hasilPrediksi: hasilPrediksiText,
+          confidence: confidenceFinal,
+          // Kirim semua data form
+          ...values
+        }),
+      });
         console.log("Data CNN-LSTM saved to Google Sheet");
       } catch (saveError) {
         console.error("Failed to save CNN-LSTM to sheet:", saveError);
@@ -305,16 +307,18 @@ export default function Home() {
 
       // Simpan ke Google Sheet PAKAI VARIABEL LOKAL, BUKAN STATE
       try {
-        await fetch("/api/save-to-sheets", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            nama: values.nama,
-            selectedModel: selectedModel,
-            hasilPrediksi: hasilPrediksiText,
-            confidence: finalConfidence,
-          }),
-        });
+      await fetch("/api/save-to-sheets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nama: values.nama,
+          selectedModel: selectedModel,
+          hasilPrediksi: hasilPrediksiText,
+          confidence: finalConfidence,
+          // Kirim semua data form
+          ...values
+        }),
+      });
         console.log("Data saved to Google Sheet");
       } catch (saveError) {
         console.error("Failed to save to sheet:", saveError);
