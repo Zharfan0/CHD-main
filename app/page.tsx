@@ -31,16 +31,17 @@ import {
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator";
 import { 
-  Activity, 
+  Activity,
+  SquaresIntersect,
   Brain, 
   Heart, 
   Save, 
-  Shield, 
+  Network, 
   Stethoscope,
   AlertCircle,
   CheckCircle2,
   Loader2,
-  Sparkles,
+  Waypoints,
   User,
 } from "lucide-react";
 
@@ -381,9 +382,9 @@ export default function Home() {
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {[
-                { value: "mi", label: "Mutual Info", desc: "10 fitur terpilih", icon: Activity, color: "from-emerald-500 to-teal-500" },
-                { value: "random-forest", label: "Random Forest", desc: "10 fitur utama", icon: Shield, color: "from-orange-500 to-red-500" },
-                { value: "cnn-lstm", label: "CNN-LSTM", desc: "37 fitur lengkap", icon: Sparkles, color: "from-purple-500 to-pink-500" }
+                { value: "mi", label: "Mutual Info", desc: "10 fitur terpilih", icon: SquaresIntersect, color: "from-emerald-500 to-teal-500" },
+                { value: "random-forest", label: "Random Forest", desc: "10 fitur utama", icon: Network, color: "from-orange-500 to-red-500" },
+                { value: "cnn-lstm", label: "CNN-LSTM", desc: "37 fitur lengkap", icon: Waypoints, color: "from-purple-500 to-pink-500" }
               ].map((item) => (
                 <button
                   key={item.value}
@@ -576,9 +577,9 @@ export default function Home() {
                     <h3 className="text-xl font-bold text-gray-800 mb-2">Hasil Prediksi</h3>
                     <p className="text-2xl md:text-3xl font-bold mb-3">
                       {predictionResult === "Have heart disease" ? (
-                        <span className="text-red-600">⚠️ Berisiko Tinggi</span>
+                        <span className="text-red-600">Berisiko Tinggi</span>
                       ) : (
-                        <span className="text-green-600">✅ Risiko Rendah</span>
+                        <span className="text-green-600">Risiko Rendah</span>
                       )}
                     </p>
                     <p className="text-gray-600 mb-2">
@@ -615,8 +616,8 @@ export default function Home() {
         {/* Footer Note */}
         <div className="text-center mt-12 pb-8">
           <p className="text-xs text-gray-400">
-            ⚠️ Prediksi ini bersifat informatif dan tidak menggantikan diagnosis medis profesional. 
-            Selalu konsultasikan dengan dokter untuk hasil yang akurat.
+            !!Prediksi ini bersifat informatif dan tidak menggantikan diagnosis medis profesional. 
+            Selalu konsultasikan dengan dokter untuk hasil yang akurat!!
           </p>
         </div>
       </div>
