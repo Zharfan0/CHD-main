@@ -351,7 +351,7 @@ export default function Home() {
           <div className="flex justify-center mb-4">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-pink-500 rounded-full blur-xl opacity-30"></div>
-              <image src="/logoUMY.png" alt="Logo UMY" className="relative w-20 h-20 object-contain" />
+              <Image src="/logoUMY.png" alt="Logo UMY" className="relative w-20 h-20 object-contain" />
             </div>
           </div>
           
