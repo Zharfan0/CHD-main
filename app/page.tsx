@@ -250,7 +250,6 @@ export default function Home() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          nama: values.nama,
           selectedModel: selectedModel,
           hasilPrediksi: hasilPrediksiText,
           confidence: confidenceFinal,
