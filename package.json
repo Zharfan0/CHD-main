@@ -19,6 +19,7 @@
     "@tensorflow/tfjs-converter": "^4.20.0",
     "@tensorflow/tfjs-core": "^4.20.0",
     "@tensorflow/tfjs-tfdf": "^0.0.1-alpha.26",
+    "@vercel/postgres": "^0.10.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "googleapis": "^171.4.0",
