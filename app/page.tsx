@@ -349,7 +349,7 @@ export default function Home() {
         body: JSON.stringify({
           selectedModel: selectedModel,
           hasilPrediksi: hasilPrediksiText,
-          confidence: confidenceFinal,
+          confidence: finalConfidence,
           ...values
         }),
       });
