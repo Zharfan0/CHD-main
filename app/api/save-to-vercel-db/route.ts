@@ -5,6 +5,8 @@ export async function POST(request: Request) {
   try {
     const data = await request.json();
 
+    console.log('Data received:', data);
+
     // Buat tabel jika belum ada
     await sql`
       CREATE TABLE IF NOT EXISTS predictions (
@@ -24,9 +26,14 @@ export async function POST(request: Request) {
       VALUES (${data.nama}, ${data.selectedModel}, ${data.hasilPrediksi}, ${data.confidence}, ${JSON.stringify(data)})
     `;
 
+    console.log('Data saved to Vercel DB');
+
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error:', error);
-    return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
+    console.error('Error saving to Vercel DB:', error);
+    return NextResponse.json(
+      { success: false, error: String(error) },
+      { status: 500 }
+    );
   }
 }
