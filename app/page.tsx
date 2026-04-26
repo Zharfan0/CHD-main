@@ -244,6 +244,24 @@ export default function Home() {
         console.error("Failed to save CNN-LSTM to sheet:", saveError);
       }
 
+      // Simpan ke Vercel DB (tanpa mengganggu Google Sheets)
+    try {
+      await fetch("/api/save-to-vercel-db", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nama: values.nama,
+          selectedModel: selectedModel,
+          hasilPrediksi: hasilPrediksiText,
+          confidence: confidenceFinal,
+          ...values
+        }),
+      });
+      console.log("Data saved to Vercel DB");
+    } catch (dbError) {
+      console.error("Failed to save to Vercel DB:", dbError);
+    }
+
     } catch (error) {
       console.error("Error executing model:", error);
       toast.error("Gagal menjalankan model CNN-LSTM");
@@ -323,6 +341,24 @@ export default function Home() {
       } catch (saveError) {
         console.error("Failed to save to sheet:", saveError);
       }
+
+      // Simpan ke Vercel DB (tanpa mengganggu Google Sheets)
+    try {
+      await fetch("/api/save-to-vercel-db", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nama: values.nama,
+          selectedModel: selectedModel,
+          hasilPrediksi: hasilPrediksiText,
+          confidence: confidenceFinal,
+          ...values
+        }),
+      });
+      console.log("Data saved to Vercel DB");
+    } catch (dbError) {
+      console.error("Failed to save to Vercel DB:", dbError);
+    }
 
       toast.success(`Prediksi berhasil: ${prediction === 1 ? "Positif" : "Negatif"}`);
 
