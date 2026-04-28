@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Prediction {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name      String
+  modelUsed String
+  result    String
+  confidence Float?
+
+  physicalactivities   String?
+  hadasthma            String?
+  removedteeth         String?
+  alcoholdrinkers      String?
+  fluvaxlast12         String?
+  chestscan            String?
+  sex                  String?
+  generalhealth        String?
+  raceethnicitycategory String?
+  lastcheckuptime      String?
+
+  physicalhealthdays   String?
+  mentalhealthdays     String?
+  sleephours           String?
+  haddiabetes          String?
+  agecategory          String?
+  bmi                  String?
+
+  heightinmeters       String?
+  hadstroke            String?
+  hadcopd              String?
+  hadarthritis         String?
+  hadkidneydisease     String?
+  hadskincancer        String?
+  haddepressivedisorder String?
+  deaforhardofhearing  String?
+  blindorvisiondifficulty String?
+  difficultyconcentrating String?
+  difficultywalking    String?
+  difficultydressingbathing String?
+  difficultyerrands    String?
+  smokerstatus         String?
+  ecigaretteusage      String?
+  hivtesting           String?
+  pneumovaxever        String?
+  tetanuslast10tdap    String?
+  highrisklastyear     String?
+  covidpos             String?
+}
