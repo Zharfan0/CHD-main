@@ -246,7 +246,7 @@ export default function Home() {
 
       // Simpan ke Vercel DB (tanpa mengganggu Google Sheets)
     try {
-      await fetch("/api/save-to-vercel-db", {
+      await fetch("/api/save-to-prisma-db", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -343,7 +343,7 @@ export default function Home() {
 
       // Simpan ke Vercel DB (tanpa mengganggu Google Sheets)
     try {
-      await fetch("/api/save-to-vercel-db", {
+      await fetch("/api/save-to-prisma-db", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
