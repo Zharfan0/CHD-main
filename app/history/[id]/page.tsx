@@ -145,7 +145,7 @@ function HistoryDetailPage({ currentUser }: { currentUser: TokenPayload }) {
           </div>
           <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             {Object.entries(FIELD_LABELS).map(([key, label]) => {
-              const val = (data as Record<string, unknown>)[key];
+              const val = (data as unknown as Record<string, unknown>)[key];
               if (!val) return null;
               return (
                 <div key={key} className="flex justify-between items-center py-2 border-b border-gray-50">
