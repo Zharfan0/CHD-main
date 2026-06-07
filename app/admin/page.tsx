@@ -45,7 +45,7 @@ function AdminPage({ currentUser }: { currentUser: TokenPayload }) {
     }
   }
 
-  useEffect(() => { loadData(); }, [filterModel, filterResult]);
+  useEffect(() => { loadData(); }, [filterModel, filterResult]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const modelLabel: Record<string, string> = {
     "mi": "Mutual Info", "random-forest": "Random Forest", "cnn-lstm": "CNN-LSTM",

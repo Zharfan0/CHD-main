@@ -75,7 +75,7 @@ function HistoryDetailPage({ currentUser }: { currentUser: TokenPayload }) {
       ["---", "---"],
       ...Object.entries(FIELD_LABELS).map(([key, label]) => [
         label,
-        (data as Record<string, unknown>)[key] ?? "-",
+        (data as unknown as Record<string, unknown>)[key] ?? "-",
       ]),
     ];
     const csv = rows.map((r) => r.map((v) => `"${v}"`).join(",")).join("\n");

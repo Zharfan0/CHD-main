@@ -58,7 +58,7 @@ function DashboardPage({ currentUser }: { currentUser: TokenPayload }) {
       nama: currentUser.fullName || currentUser.username,
       ...Object.fromEntries(featureMap[selectedModel].map((f) => [f, ""])),
     });
-  }, [selectedModel]);
+  }, [selectedModel]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleDownload = () => {
     const allValues = form.getValues();
