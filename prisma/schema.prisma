@@ -7,52 +7,84 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ============================================
+// ENUM ROLE
+// ============================================
+enum Role {
+  user
+  admin
+}
+
+// ============================================
+// MODEL USER
+// ============================================
+model User {
+  id           Int          @id @default(autoincrement())
+  username     String       @unique
+  fullName     String?
+  passwordHash String
+  role         Role         @default(user)
+  createdAt    DateTime     @default(now())
+  predictions  Prediction[]
+}
+
+// ============================================
+// MODEL PREDICTION (existing + tambah userId)
+// ============================================
 model Prediction {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Info prediksi
   name      String
   modelUsed String
   result    String
   confidence Float?
 
-  physicalactivities   String?
-  hadasthma            String?
-  removedteeth         String?
-  alcoholdrinkers      String?
-  fluvaxlast12         String?
-  chestscan            String?
-  sex                  String?
-  generalhealth        String?
+  // Relasi ke User (nullable = guest boleh prediksi tanpa login)
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id])
+
+  // ── Fitur MI (10) ──────────────────────────
+  physicalactivities    String?
+  hadasthma             String?
+  removedteeth          String?
+  alcoholdrinkers       String?
+  fluvaxlast12          String?
+  chestscan             String?
+  sex                   String?
+  generalhealth         String?
   raceethnicitycategory String?
-  lastcheckuptime      String?
+  lastcheckuptime       String?
 
-  physicalhealthdays   String?
-  mentalhealthdays     String?
-  sleephours           String?
-  haddiabetes          String?
-  agecategory          String?
-  bmi                  String?
+  // ── Fitur RF tambahan ──────────────────────
+  physicalhealthdays    String?
+  mentalhealthdays      String?
+  sleephours            String?
+  haddiabetes           String?
+  agecategory           String?
+  bmi                   String?
 
-  heightinmeters       String?
-  hadstroke            String?
-  hadcopd              String?
-  hadarthritis         String?
-  hadkidneydisease     String?
-  hadskincancer        String?
+  // ── Fitur Full tambahan ───────────────────
+  heightinmeters        String?
+  hadstroke             String?
+  hadcopd               String?
+  hadarthritis          String?
+  hadkidneydisease      String?
+  hadskincancer         String?
   haddepressivedisorder String?
-  deaforhardofhearing  String?
+  deaforhardofhearing   String?
   blindorvisiondifficulty String?
   difficultyconcentrating String?
-  difficultywalking    String?
+  difficultywalking     String?
   difficultydressingbathing String?
-  difficultyerrands    String?
-  smokerstatus         String?
-  ecigaretteusage      String?
-  hivtesting           String?
-  pneumovaxever        String?
-  tetanuslast10tdap    String?
-  highrisklastyear     String?
-  covidpos             String?
+  difficultyerrands     String?
+  smokerstatus          String?
+  ecigaretteusage       String?
+  hivtesting            String?
+  pneumovaxever         String?
+  tetanuslast10tdap     String?
+  highrisklastyear      String?
+  covidpos              String?
 }

@@ -1,29 +1,16 @@
-// app/api/save-to-prisma-db/route.ts
-// MODIFIKASI: sekarang menerima token opsional dan menyimpan userId jika ada.
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { optionalAuth } from "@/lib/jwt";
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const data = await request.json();
-
-    // ── Ambil userId dari token (jika ada) ───────────────────
-    const authHeader = request.headers.get("authorization");
-    const userPayload = optionalAuth(authHeader);
-    const userId = userPayload?.userId ?? null;
+    const data = await request.json()
 
     const prediction = await prisma.prediction.create({
       data: {
-        name: data.nama || "Anonymous",
-        modelUsed: data.selectedModel || "unknown",
-        result: data.hasilPrediksi || "unknown",
+        name: data.nama || 'Anonymous',
+        modelUsed: data.selectedModel || 'unknown',
+        result: data.hasilPrediksi || 'unknown',
         confidence: data.confidence ?? null,
-
-        // Relasi ke user (nullable)
-        userId,
-
-        // ── Semua kolom fitur (tidak berubah) ───────────────
         physicalactivities: data.physicalactivities || null,
         hadasthma: data.hadasthma || null,
         removedteeth: data.removedteeth || null,
@@ -61,15 +48,16 @@ export async function POST(request: NextRequest) {
         highrisklastyear: data.highrisklastyear || null,
         covidpos: data.covidpos || null,
       },
-    });
+    })
 
-    console.log(`✅ Data tersimpan: ${prediction.id} | userId: ${userId ?? "guest"}`);
-    return NextResponse.json({ success: true, data: prediction });
+    console.log('✅ Data tersimpan:', prediction.id)
+    return NextResponse.json({ success: true, data: prediction })
+    
   } catch (error) {
-    console.error("❌ Error:", error);
+    console.error('❌ Error:', error)
     return NextResponse.json(
       { success: false, error: String(error) },
       { status: 500 }
-    );
+    )
   }
 }

@@ -345,5 +345,24 @@ export const fieldMetadata: Record<string, FieldMeta> = {
     ],
 },
 
+  // ============================================
+  // RIWAYAT PENYAKIT - ANGINA (BARU)
+  // ============================================
+  hadangina: {
+    label: "Had Angina",
+    description: "(Ever told) (you had) angina or coronary heart disease?",
+    options: [
+      { label: "No", value: "0" },
+      { label: "Yes", value: "1" },
+    ],
+  },
+
+  // ============================================
+  // ANTROPOMETRI - WEIGHT (BARU)
+  // ============================================
+  weightinkilograms: {
+    label: "Weight in Kilograms",
+    description: "Reported weight in kilograms",
+  },
 
 };
