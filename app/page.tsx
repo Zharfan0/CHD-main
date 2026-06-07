@@ -40,8 +40,13 @@ import {
   Loader2,
   Waypoints,
   User,
+  LogIn,
+  UserPlus,
+  LayoutDashboard,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { getCurrentUser, TokenPayload } from "@/lib/auth";
 
 export default function Home() {
   const [modelReady, setModelReady] = useState(true);
@@ -49,6 +54,9 @@ export default function Home() {
   const [selectedModel, setSelectedModel] = useState<"cnn-lstm" | "random-forest" | "mi">("mi");
   const selectedFields = featureMap[selectedModel ?? "cnn-lstm"];
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Cek apakah user sudah login (untuk tampilkan navbar yang sesuai)
+  const [loggedInUser, setLoggedInUser] = useState<TokenPayload | null>(null);
+  useEffect(() => { setLoggedInUser(getCurrentUser()); }, []);
 
   useEffect(() => {
     toast.success(`${selectedModel === "cnn-lstm" ? "CNN-LSTM" : selectedModel === "random-forest" ? "Random Forest" : "Mutual Information"} model ready (API-based)`);
@@ -181,6 +189,41 @@ export default function Home() {
       </div>
 
       <div className="relative max-w-6xl mx-auto px-4 py-8 md:px-6 lg:px-8">
+
+        {/* ── Navbar ─────────────────────────────────────────── */}
+        <div className="flex justify-between items-center mb-6 bg-white/80 backdrop-blur rounded-2xl shadow-sm px-5 py-3 border border-gray-100">
+          <div className="flex items-center gap-2">
+            <Image src="/logoUMY.png" alt="Logo UMY" width={32} height={32} className="object-contain" />
+            <span className="font-semibold text-gray-700 text-sm hidden sm:block">MyHeartD</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {loggedInUser ? (
+              /* User sudah login → arahkan ke dashboard */
+              <Link href={loggedInUser.role === "admin" ? "/admin" : "/dashboard"}>
+                <Button size="sm" className="gap-1.5 text-xs bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                  <LayoutDashboard className="w-3.5 h-3.5" />
+                  {loggedInUser.role === "admin" ? "Admin Panel" : "Dashboard"}
+                </Button>
+              </Link>
+            ) : (
+              /* Guest → tampilkan tombol Login dan Daftar */
+              <>
+                <Link href="/login">
+                  <Button variant="outline" size="sm" className="gap-1.5 text-xs border-gray-200 hover:border-blue-400">
+                    <LogIn className="w-3.5 h-3.5" /> Masuk
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button size="sm" className="gap-1.5 text-xs bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                    <UserPlus className="w-3.5 h-3.5" /> Daftar
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+        {/* ── End Navbar ──────────────────────────────────────── */}
+
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="relative">

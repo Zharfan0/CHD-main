@@ -44,3 +44,12 @@ next-env.d.ts
 
 # local env
 .env
+
+# prisma generated client (di-generate ulang saat deploy)
+prisma/generated/
+
+# editor
+.idea/
+.vscode/
+*.swp
+*.swo
